@@ -1,0 +1,92 @@
+﻿<mah:MetroWindow x:Class="Bushtail_Sports.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:lcl="clr-namespace:Bushtail_Sports"
+        xmlns:view="clr-namespace:Bushtail_Sports.View"
+        xmlns:viewmod="clr-namespace:Bushtail_Sports.Viewmodel"
+        mc:Ignorable="d"
+        Title="Bushtail-Sports" Height="400" Width="600"
+        ResizeMode="CanResizeWithGrip" >
+
+    <mah:MetroWindow.DataContext>
+        <viewmod:ViewModel/>
+    </mah:MetroWindow.DataContext>
+
+    <mah:MetroWindow.Resources>
+        <DataTemplate DataType="{x:Type viewmod:VM_BotSetup}">
+            <view:UC_BotSetup />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmod:VM_BotControl}">
+            <view:UC_BotControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmod:VM_Settings}">
+            <view:UC_Settings />
+        </DataTemplate>
+    </mah:MetroWindow.Resources>
+
+    <Grid>
+        <Grid.Resources>
+            <lcl:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
+            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type mah:HamburgerMenuIconItem}">
+                <Grid x:Name="RootGrid"
+                      Height="48"
+                      Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Icon}"
+                                    Focusable="False" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Text="{Binding Label}" />
+                </Grid>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mah:HamburgerMenu}}, Path=IsPaneOpen}" Value="False">
+                        <Setter TargetName="RootGrid" Property="ToolTip" Value="{Binding ToolTip, Mode=OneWay}" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+
+
+        </Grid.Resources>
+
+        <mah:HamburgerMenu x:Name="HamburgerMenuControl"
+                           DisplayMode="CompactInline"
+                           IsPaneOpen="False"
+                           ItemTemplate="{StaticResource MenuItemTemplate}"
+                           ItemsSource="{Binding MenuItems}"
+                           OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                           OptionsItemsSource="{Binding MenuOptionItems}"
+                           SelectedIndex="0">
+
+            <!--  select the tag (ViewModel) of the selected item (options item)  -->
+            <mah:HamburgerMenu.Content>
+                <MultiBinding Converter="{StaticResource SelectedItemToContentConverter}">
+                    <Binding FallbackValue="{x:Null}"
+                             Mode="OneWay"
+                             Path="SelectedItem.Tag"
+                             RelativeSource="{RelativeSource Self}" />
+                    <Binding FallbackValue="{x:Null}"
+                             Mode="OneWay"
+                             Path="SelectedOptionsItem.Tag"
+                             RelativeSource="{RelativeSource Self}" />
+                </MultiBinding>
+            </mah:HamburgerMenu.Content>
+
+        </mah:HamburgerMenu>
+
+    </Grid>
+
+
+
+
+</mah:MetroWindow>
